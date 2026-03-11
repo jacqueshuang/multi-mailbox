@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker info:*)",
+      "Bash(docker run:*)",
+      "Bash(docker logs:*)",
+      "Bash(pnpm db:push)",
+      "Bash(pnpm exec drizzle-kit push)",
+      "Bash(lsof:*)",
+      "Bash(pnpm dev)",
+      "mcp__chrome-devtools__new_page",
+      "Bash(pnpm check)",
+      "Bash(pnpm test)",
+      "Bash(pnpm build)",
+      "Bash(pnpm run dev)",
+      "Bash(pnpm add -D baseline-browser-mapping@latest)",
+      "Bash(timeout 12s pnpm start)",
+      "Bash(pnpm db:migrate && pnpm db:migrate)"
+    ]
+  }
+}
