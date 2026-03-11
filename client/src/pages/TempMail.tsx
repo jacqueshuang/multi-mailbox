@@ -19,6 +19,11 @@ export default function TempMail() {
   const [tempMailUnlimited, setTempMailUnlimited] = useState(false);
   const [autoRefreshTempMail, setAutoRefreshTempMail] = useState(true);
 
+  const generateLocalPart = () => {
+    const random = Math.random().toString(36).slice(2, 8);
+    setTempMailLocalPart(`temp-${random}`);
+  };
+
   const { data: tempMailboxes, refetch: refetchTempMailboxes } = trpc.tempMail.list.useQuery();
   const { refetch: refetchEmails } = trpc.emailAccount.list.useQuery();
 
@@ -65,21 +70,31 @@ export default function TempMail() {
 
   return (
     <div className="h-full overflow-auto">
-      <div className="max-w-4xl mx-auto p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>临时邮箱</CardTitle>
+      <div className="max-w-5xl mx-auto p-6 md:p-8 space-y-4">
+        <div className="bg-card border border-border/60 rounded-xl shadow-elegant">
+          <div className="px-5 py-4 border-b border-border/50">
+            <CardTitle className="text-sm font-semibold">临时邮箱</CardTitle>
             <CardDescription>生成临时邮箱用于接收一次性邮件</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>地址前缀（可选）</Label>
-                <Input
-                  placeholder="例如 promo"
-                  value={tempMailLocalPart}
-                  onChange={(e) => setTempMailLocalPart(e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  <Input
+                    placeholder="例如 promo"
+                    value={tempMailLocalPart}
+                    onChange={(e) => setTempMailLocalPart(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="border-border/70"
+                    onClick={generateLocalPart}
+                  >
+                    自动生成
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>有效期（分钟）</Label>
@@ -133,6 +148,7 @@ export default function TempMail() {
               </Button>
               <Button
                 variant="outline"
+                className="border-border/70"
                 onClick={() => {
                   refetchTempMailboxes();
                   refetchEmails();
@@ -148,7 +164,7 @@ export default function TempMail() {
                 {tempMailboxes.map((mailbox) => {
                   const expired = mailbox.expiresAt ? new Date(mailbox.expiresAt) < new Date() : false;
                   return (
-                    <div key={mailbox.id} className="border rounded-lg p-3 space-y-2">
+                    <div key={mailbox.id} className="border border-border/60 rounded-lg p-3 space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="font-medium">{mailbox.address}</div>
                         <Badge variant={expired || !mailbox.isActive ? "destructive" : "secondary"}>
@@ -164,6 +180,7 @@ export default function TempMail() {
                         <Button
                           size="sm"
                           variant="outline"
+                          className="border-border/70"
                           onClick={() => navigator.clipboard.writeText(mailbox.address)}
                         >
                           <Copy className="h-4 w-4 mr-2" />
@@ -172,6 +189,7 @@ export default function TempMail() {
                         <Button
                           size="sm"
                           variant="outline"
+                          className="border-border/70"
                           onClick={() => extendTempMailboxMutation.mutate({
                             id: mailbox.id,
                             expiresInMinutes: tempMailUnlimited ? undefined : tempMailDurationMinutes,
@@ -184,6 +202,7 @@ export default function TempMail() {
                         <Button
                           size="sm"
                           variant="outline"
+                          className="border-border/70"
                           onClick={() => setLocation(`/?account=${mailbox.accountId}`)}
                         >
                           查看收件箱
@@ -191,7 +210,7 @@ export default function TempMail() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-destructive"
+                          className="text-destructive border-border/70"
                           onClick={() => deleteTempMailboxMutation.mutate({ id: mailbox.id })}
                           disabled={deleteTempMailboxMutation.isPending}
                         >
@@ -205,8 +224,8 @@ export default function TempMail() {
             ) : (
               <div className="text-sm text-muted-foreground">暂无临时邮箱</div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

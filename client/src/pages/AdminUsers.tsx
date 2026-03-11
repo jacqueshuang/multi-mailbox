@@ -56,113 +56,120 @@ export default function AdminUsers() {
 
   if (loading || isLoading) {
     return (
-      <div className="p-6">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          加载中...
+      <div className="h-full overflow-auto">
+        <div className="max-w-5xl mx-auto p-6 md:p-8">
+          <div className="bg-card border border-border/60 rounded-xl shadow-elegant p-4">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              加载中...
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>用户管理</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {rows.length === 0 ? (
-            <div className="text-sm text-muted-foreground">暂无用户</div>
-          ) : (
-            <div className="space-y-3">
-              {rows.map((row) => (
-                <div
-                  key={row.id}
-                  className="border rounded-lg p-4 flex flex-col gap-3"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="font-medium">
-                        {row.name || row.email || row.openId}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {row.email || "-"}
-                      </div>
-                    </div>
-                    <Badge variant={row.role === "admin" ? "default" : "secondary"}>
-                      {row.role === "admin" ? "管理员" : "用户"}
-                    </Badge>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <div className="text-muted-foreground">登录方式</div>
-                      <div>{row.loginMethod || "-"}</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">注册时间</div>
+    <div className="h-full overflow-auto">
+      <div className="max-w-5xl mx-auto p-6 md:p-8">
+        <div className="bg-card border border-border/60 rounded-xl shadow-elegant">
+          <div className="px-5 py-4 border-b border-border/50">
+            <CardTitle className="text-sm font-semibold">用户管理</CardTitle>
+          </div>
+          <div className="p-5 space-y-4">
+            {rows.length === 0 ? (
+              <div className="text-sm text-muted-foreground">暂无用户</div>
+            ) : (
+              <div className="space-y-3">
+                {rows.map((row) => (
+                  <div
+                    key={row.id}
+                    className="border border-border/60 rounded-lg p-4 flex flex-col gap-3"
+                  >
+                    <div className="flex items-start justify-between gap-4">
                       <div>
-                        {row.createdAt
-                          ? format(new Date(row.createdAt), "yyyy/MM/dd HH:mm", { locale: zhCN })
-                          : "-"}
+                        <div className="font-medium">
+                          {row.name || row.email || row.openId}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {row.email || "-"}
+                        </div>
                       </div>
+                      <Badge variant={row.role === "admin" ? "default" : "secondary"}>
+                        {row.role === "admin" ? "管理员" : "用户"}
+                      </Badge>
                     </div>
-                    <div>
-                      <div className="text-muted-foreground">最近登录</div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                       <div>
-                        {row.lastSignedIn
-                          ? format(new Date(row.lastSignedIn), "yyyy/MM/dd HH:mm", { locale: zhCN })
-                          : "-"}
+                        <div className="text-muted-foreground">登录方式</div>
+                        <div>{row.loginMethod || "-"}</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">注册时间</div>
+                        <div>
+                          {row.createdAt
+                            ? format(new Date(row.createdAt), "yyyy/MM/dd HH:mm", { locale: zhCN })
+                            : "-"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">最近登录</div>
+                        <div>
+                          {row.lastSignedIn
+                            ? format(new Date(row.lastSignedIn), "yyyy/MM/dd HH:mm", { locale: zhCN })
+                            : "-"}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">状态</div>
+                        <div>{row.isActive ? "启用" : "已禁用"}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-muted-foreground">状态</div>
-                      <div>{row.isActive ? "启用" : "已禁用"}</div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <Select
+                        value={row.role}
+                        onValueChange={(value) => {
+                          setUpdatingUserId(row.id);
+                          setUserRoleMutation.mutate({
+                            id: row.id,
+                            role: value as "user" | "admin",
+                          });
+                        }}
+                        disabled={setUserRoleMutation.isPending && updatingUserId === row.id}
+                      >
+                        <SelectTrigger className="w-[160px] border-border/70">
+                          <SelectValue placeholder="设置角色" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">用户</SelectItem>
+                          <SelectItem value="admin">管理员</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <Button
+                        variant={row.isActive ? "outline" : "default"}
+                        className={row.isActive ? "border-border/70" : undefined}
+                        onClick={() => {
+                          setUpdatingUserId(row.id);
+                          setUserStatusMutation.mutate({
+                            id: row.id,
+                            isActive: !row.isActive,
+                          });
+                        }}
+                        disabled={setUserStatusMutation.isPending && updatingUserId === row.id}
+                      >
+                        {row.isActive ? "禁用" : "启用"}
+                      </Button>
                     </div>
                   </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <Select
-                      value={row.role}
-                      onValueChange={(value) => {
-                        setUpdatingUserId(row.id);
-                        setUserRoleMutation.mutate({
-                          id: row.id,
-                          role: value as "user" | "admin",
-                        });
-                      }}
-                      disabled={setUserRoleMutation.isPending && updatingUserId === row.id}
-                    >
-                      <SelectTrigger className="w-[160px]">
-                        <SelectValue placeholder="设置角色" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">用户</SelectItem>
-                        <SelectItem value="admin">管理员</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Button
-                      variant={row.isActive ? "outline" : "default"}
-                      onClick={() => {
-                        setUpdatingUserId(row.id);
-                        setUserStatusMutation.mutate({
-                          id: row.id,
-                          isActive: !row.isActive,
-                        });
-                      }}
-                      disabled={setUserStatusMutation.isPending && updatingUserId === row.id}
-                    >
-                      {row.isActive ? "禁用" : "启用"}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

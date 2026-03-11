@@ -25,7 +25,9 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Switch } from "@/components/ui/switch";
 import { useIsMobile } from "@/hooks/useMobile";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   Mail,
   Inbox,
@@ -38,6 +40,8 @@ import {
   ChevronRight,
   Users,
   MailPlus,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState, useMemo } from "react";
 import { useLocation } from "wouter";
@@ -85,11 +89,11 @@ export default function MailLayout({
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-        <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full animate-fade-in">
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full">
           <div className="flex flex-col items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <Mail className="h-8 w-8 text-primary" />
+            <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-border/60 flex items-center justify-center">
+              <Mail className="h-6 w-6 text-primary" />
             </div>
             <h1 className="text-2xl font-semibold tracking-tight text-center">
               多邮箱管理中心
@@ -103,7 +107,7 @@ export default function MailLayout({
               window.location.href = "/login";
             }}
             size="lg"
-            className="w-full shadow-elegant hover:shadow-elegant-lg transition-all"
+            className="w-full shadow-elegant"
           >
             登录以继续
           </Button>
@@ -139,6 +143,7 @@ function MailLayoutContent({
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
+  const { theme, toggleTheme, switchable } = useTheme();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -197,10 +202,10 @@ function MailLayoutContent({
       <div className="relative" ref={sidebarRef}>
         <Sidebar
           collapsible="icon"
-          className="border-r-0"
+          className="border-r border-border/70"
           disableTransition={isResizing}
         >
-          <SidebarHeader className="h-16 justify-center">
+          <SidebarHeader className="h-14 justify-center border-b border-border/60">
             <div className="flex items-center gap-3 px-2 transition-all w-full">
               <button
                 onClick={toggleSidebar}
@@ -212,7 +217,7 @@ function MailLayoutContent({
               {!isCollapsed && (
                 <div className="flex items-center gap-2 min-w-0">
                   <Mail className="h-5 w-5 text-primary shrink-0" />
-                  <span className="font-semibold tracking-tight truncate">
+                  <span className="text-sm font-semibold tracking-tight truncate">
                     邮箱管理
                   </span>
                 </div>
@@ -220,7 +225,7 @@ function MailLayoutContent({
             </div>
           </SidebarHeader>
 
-          <SidebarContent className="gap-0 px-2">
+          <SidebarContent className="gap-0 px-2 pt-1">
             {/* Main navigation */}
             <SidebarMenu className="py-2">
               {menuItems.map(item => {
@@ -231,7 +236,7 @@ function MailLayoutContent({
                       isActive={isActive}
                       onClick={() => setLocation(item.path)}
                       tooltip={item.label}
-                      className="h-10 transition-all font-normal"
+                      className="h-9 transition-all font-normal"
                     >
                       <item.icon
                         className={`h-4 w-4 ${isActive ? "text-primary" : ""}`}
@@ -250,7 +255,7 @@ function MailLayoutContent({
 
             {/* Email accounts section */}
             {!isCollapsed && accounts && accounts.length > 0 && (
-              <div className="py-2 border-t">
+              <div className="py-2 border-t border-border/60">
                 {groups?.map((group) => {
                   const groupAccounts = accounts.filter(
                     (a) => a.groupId === group.id
@@ -264,7 +269,7 @@ function MailLayoutContent({
                     >
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuButton className="w-full justify-between font-medium text-muted-foreground uppercase tracking-wider text-xs h-8 hover:bg-transparent px-3">
+                          <SidebarMenuButton className="w-full justify-between font-medium text-muted-foreground uppercase tracking-wider text-[11px] h-7 hover:bg-transparent px-3">
                             <span>{group.name}</span>
                             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
                           </SidebarMenuButton>
@@ -310,11 +315,11 @@ function MailLayoutContent({
                   return (
                     <>
                       {groups && groups.length > 0 ? (
-                        <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        <div className="px-3 py-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                           其他账户
                         </div>
                       ) : (
-                        <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        <div className="px-3 py-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                           邮箱账户
                         </div>
                       )}
@@ -352,8 +357,8 @@ function MailLayoutContent({
 
             {/* Labels section */}
             {!isCollapsed && labels && labels.length > 0 && (
-              <div className="py-2 border-t">
-                <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <div className="py-2 border-t border-border/60">
+                <div className="px-3 py-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                   标签
                 </div>
                 <SidebarMenu>
@@ -374,9 +379,9 @@ function MailLayoutContent({
             )}
 
             {/* Settings section */}
-            <div className="py-2 border-t mt-auto">
+            <div className="py-2 border-t border-border/60 mt-auto">
               {!isCollapsed && (
-                <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <div className="px-3 py-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                   设置
                 </div>
               )}
@@ -416,7 +421,24 @@ function MailLayoutContent({
             </div>
           </SidebarContent>
 
-          <SidebarFooter className="p-3 border-t">
+          <SidebarFooter className="p-3 border-t border-border/60">
+            {switchable && toggleTheme && (
+              <div className="flex items-center justify-between gap-2 px-2 py-2 rounded-lg border border-border/60 bg-background/60 mb-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:py-1">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">
+                  {theme === "dark" ? (
+                    <Moon className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Sun className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <span>夜间模式</span>
+                </div>
+                <Switch
+                  checked={theme === "dark"}
+                  onCheckedChange={() => toggleTheme()}
+                  aria-label="切换日夜模式"
+                />
+              </div>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -429,7 +451,7 @@ function MailLayoutContent({
                     <p className="text-sm font-medium truncate leading-none">
                       {user?.name || "用户"}
                     </p>
-                    <p className="text-xs text-muted-foreground truncate mt-1.5">
+                    <p className="text-xs text-muted-foreground truncate mt-1">
                       {user?.email || "-"}
                     </p>
                   </div>
@@ -463,7 +485,7 @@ function MailLayoutContent({
           </SidebarFooter>
         </Sidebar>
         <div
-          className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${isCollapsed ? "hidden" : ""}`}
+          className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/10 transition-colors ${isCollapsed ? "hidden" : ""}`}
           onMouseDown={() => {
             if (isCollapsed) return;
             setIsResizing(true);
@@ -474,12 +496,12 @@ function MailLayoutContent({
 
       <SidebarInset>
         {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+          <div className="flex border-b border-border/60 h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
               <div className="flex items-center gap-2">
                 <Mail className="h-5 w-5 text-primary" />
-                <span className="font-semibold">邮箱管理</span>
+                <span className="text-sm font-semibold">邮箱管理</span>
               </div>
             </div>
           </div>

@@ -60,21 +60,21 @@ export default function MicrosoftCallback() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md border border-border/60 shadow-elegant">
+        <CardHeader className="text-center border-b border-border/50">
+          <div className="mx-auto mb-4 h-14 w-14 rounded-full border border-border/60 bg-primary/10 flex items-center justify-center">
             {status === "loading" && (
-              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+              <Loader2 className="h-6 w-6 text-primary animate-spin" />
             )}
             {status === "success" && (
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <CheckCircle className="h-6 w-6 text-green-500" />
             )}
             {status === "error" && (
-              <XCircle className="h-8 w-8 text-destructive" />
+              <XCircle className="h-6 w-6 text-destructive" />
             )}
           </div>
-          <CardTitle>
+          <CardTitle className="text-base font-semibold">
             {status === "loading" && "正在连接 Microsoft/Outlook..."}
             {status === "success" && "连接成功！"}
             {status === "error" && "连接失败"}
@@ -105,6 +105,7 @@ export default function MicrosoftCallback() {
               <div className="flex gap-2 justify-center">
                 <Button
                   variant="outline"
+                  className="border-border/70"
                   onClick={() => setLocation("/accounts")}
                 >
                   返回账户管理

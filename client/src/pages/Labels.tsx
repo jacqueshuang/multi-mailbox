@@ -149,93 +149,95 @@ export default function Labels() {
 
   return (
     <div className="h-full overflow-auto">
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto p-6 md:p-8 space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-semibold">邮件标签</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              创建和管理邮件标签，方便分类整理邮件
-            </p>
-          </div>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => { resetForm(); setEditingLabel(null); }}>
-                <Plus className="h-4 w-4 mr-2" />
-                新建标签
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <form onSubmit={handleSubmit}>
-                <DialogHeader>
-                  <DialogTitle>新建标签</DialogTitle>
-                  <DialogDescription>
-                    创建一个新的邮件标签
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">标签名称</Label>
-                    <Input
-                      id="name"
-                      placeholder="例如：工作、重要、待办"
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="description">描述（可选）</Label>
-                    <Input
-                      id="description"
-                      placeholder="标签的简短描述"
-                      value={formData.description}
-                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>标签颜色</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {PRESET_COLORS.map((color) => (
-                        <button
-                          key={color}
-                          type="button"
-                          className={`w-8 h-8 rounded-full transition-all ${
-                            formData.color === color
-                              ? "ring-2 ring-offset-2 ring-primary scale-110"
-                              : "hover:scale-105"
-                          }`}
-                          style={{ backgroundColor: color }}
-                          onClick={() => setFormData(prev => ({ ...prev, color }))}
-                        />
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Palette className="h-4 w-4 text-muted-foreground" />
+        <div className="bg-card border border-border/60 rounded-xl shadow-elegant">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
+            <div>
+              <h1 className="text-lg font-semibold">邮件标签</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                创建和管理邮件标签，方便分类整理邮件
+              </p>
+            </div>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => { resetForm(); setEditingLabel(null); }}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  新建标签
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <form onSubmit={handleSubmit}>
+                  <DialogHeader>
+                    <DialogTitle>新建标签</DialogTitle>
+                    <DialogDescription>
+                      创建一个新的邮件标签
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">标签名称</Label>
                       <Input
-                        type="color"
-                        value={formData.color}
-                        onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
-                        className="w-20 h-8 p-1 cursor-pointer"
+                        id="name"
+                        placeholder="例如：工作、重要、待办"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        required
                       />
-                      <span className="text-sm text-muted-foreground">{formData.color}</span>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="description">描述（可选）</Label>
+                      <Input
+                        id="description"
+                        placeholder="标签的简短描述"
+                        value={formData.description}
+                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>标签颜色</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {PRESET_COLORS.map((color) => (
+                          <button
+                            key={color}
+                            type="button"
+                            className={`w-8 h-8 rounded-full transition-all ${
+                              formData.color === color
+                                ? "ring-2 ring-offset-2 ring-primary scale-110"
+                                : "hover:scale-105"
+                            }`}
+                            style={{ backgroundColor: color }}
+                            onClick={() => setFormData(prev => ({ ...prev, color }))}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Palette className="h-4 w-4 text-muted-foreground" />
+                        <Input
+                          type="color"
+                          value={formData.color}
+                          onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                          className="w-20 h-8 p-1 cursor-pointer"
+                        />
+                        <span className="text-sm text-muted-foreground">{formData.color}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                    取消
-                  </Button>
-                  <Button type="submit" disabled={createLabelMutation.isPending}>
-                    {createLabelMutation.isPending && (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    )}
-                    创建
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  <DialogFooter>
+                    <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                      取消
+                    </Button>
+                    <Button type="submit" disabled={createLabelMutation.isPending}>
+                      {createLabelMutation.isPending && (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      )}
+                      创建
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {/* Edit Dialog */}
@@ -311,119 +313,122 @@ export default function Labels() {
         </Dialog>
 
         {/* Labels List */}
-        {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <Skeleton className="h-6 w-32" />
-                  <Skeleton className="h-4 w-48" />
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        ) : labels && labels.length > 0 ? (
-          <div className="space-y-3">
-            {labels.map((label) => (
-              <Card key={label.id} className="overflow-hidden">
-                <CardHeader className="py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="h-10 w-10 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: `${label.color}20` }}
-                      >
-                        <Tag className="h-5 w-5" style={{ color: label.color }} />
-                      </div>
-                      <div>
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <span
-                            className="inline-block w-3 h-3 rounded-full"
-                            style={{ backgroundColor: label.color }}
-                          />
-                          {label.name}
-                          {label.isSystem && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded">系统</span>
+        <div className="bg-card border border-border/60 rounded-xl shadow-elegant p-5">
+          {isLoading ? (
+            <div className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <Card key={i}>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-32" />
+                    <Skeleton className="h-4 w-48" />
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          ) : labels && labels.length > 0 ? (
+            <div className="space-y-3">
+              {labels.map((label) => (
+                <Card key={label.id} className="overflow-hidden">
+                  <CardHeader className="py-4 border-b border-border/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="h-9 w-9 rounded-full border border-border/60 flex items-center justify-center"
+                          style={{ backgroundColor: `${label.color}1A` }}
+                        >
+                          <Tag className="h-4 w-4" style={{ color: label.color }} />
+                        </div>
+                        <div>
+                          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                            <span
+                              className="inline-block w-2.5 h-2.5 rounded-full"
+                              style={{ backgroundColor: label.color }}
+                            />
+                            {label.name}
+                            {label.isSystem && (
+                              <span className="text-[10px] bg-muted px-2 py-0.5 rounded">系统</span>
+                            )}
+                          </CardTitle>
+                          {label.description && (
+                            <CardDescription className="text-sm mt-1">
+                              {label.description}
+                            </CardDescription>
                           )}
-                        </CardTitle>
-                        {label.description && (
-                          <CardDescription className="text-sm mt-1">
-                            {label.description}
-                          </CardDescription>
-                        )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground hover:text-foreground"
+                          onClick={() => openEditDialog(label)}
+                          disabled={label.isSystem}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-destructive hover:text-destructive"
+                              disabled={label.isSystem}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>确认删除</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                确定要删除标签「{label.name}」吗？此操作将移除所有邮件上的该标签，但不会删除邮件本身。
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>取消</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteLabelMutation.mutate({ id: label.id })}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                删除
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEditDialog(label)}
-                        disabled={label.isSystem}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-destructive hover:text-destructive"
-                            disabled={label.isSystem}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>确认删除</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              确定要删除标签「{label.name}」吗？此操作将移除所有邮件上的该标签，但不会删除邮件本身。
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>取消</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => deleteLabelMutation.mutate({ id: label.id })}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              删除
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Tag className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-medium mb-2">还没有标签</h3>
-              <p className="text-sm text-muted-foreground text-center max-w-sm mb-4">
-                创建标签来分类和整理您的邮件
-              </p>
-              <Button onClick={() => setIsAddDialogOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                新建标签
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card className="border-dashed">
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <div className="h-14 w-14 rounded-full border border-border/60 bg-muted/60 flex items-center justify-center mb-4">
+                  <Tag className="h-7 w-7 text-muted-foreground" />
+                </div>
+                <h3 className="text-base font-medium mb-2">还没有标签</h3>
+                <p className="text-sm text-muted-foreground text-center max-w-sm mb-4">
+                  创建标签来分类和整理您的邮件
+                </p>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  新建标签
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
 
         {/* Tips */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+        <div className="bg-card border border-border/60 rounded-xl shadow-elegant">
+          <div className="px-5 py-4 border-b border-border/50">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
               <Tag className="h-4 w-4" />
               使用提示
             </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground space-y-2">
+          </div>
+          <div className="p-5 text-sm text-muted-foreground space-y-2">
             <p>
               <strong>添加标签：</strong>在邮件详情页面，点击标签图标可以为邮件添加或移除标签。
             </p>
@@ -433,8 +438,8 @@ export default function Labels() {
             <p>
               <strong>颜色区分：</strong>为不同类型的邮件使用不同颜色的标签，便于快速识别。
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
