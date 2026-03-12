@@ -52,12 +52,30 @@ const trpcClient = trpc.createClient({
   ],
 });
 
-createRoot(document.getElementById("root")!).render(
-  <trpc.Provider client={trpcClient} queryClient={queryClient}>
-    <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <App />
-      </NotificationProvider>
-    </QueryClientProvider>
-  </trpc.Provider>
-);
+const loadRuntimeConfig = async () => {
+  try {
+    const response = await fetch("/runtime-config.json", {
+      cache: "no-store",
+    });
+    if (!response.ok) return;
+    const config = await response.json();
+    (window as any).__RUNTIME_CONFIG__ = config;
+  } catch (error) {
+    console.warn("[Runtime Config] Failed to load", error);
+  }
+};
+
+const bootstrap = async () => {
+  await loadRuntimeConfig();
+  createRoot(document.getElementById("root")!).render(
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <NotificationProvider>
+          <App />
+        </NotificationProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+};
+
+bootstrap();

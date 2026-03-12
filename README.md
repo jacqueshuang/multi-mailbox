@@ -138,6 +138,51 @@ pnpm build
 pnpm start
 ```
 
+## Docker
+
+### Build image locally
+```bash
+docker build \
+  --build-arg VITE_APP_ID=your_app_id \
+  --build-arg VITE_PUBLIC_BASE_URL=http://localhost:3000 \
+  --build-arg VITE_OAUTH_PORTAL_URL=http://localhost:3000 \
+  -t multi-mailbox:local .
+```
+
+### Run container
+```bash
+docker run -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e PORT=3000 \
+  -e DATABASE_URL=mysql://user:password@host:port/dbname \
+  -e JWT_SECRET=your_secure_jwt_secret \
+  -e OWNER_OPEN_ID=your_admin_openid \
+  -e GOOGLE_CLIENT_ID=your_google_client_id \
+  -e GOOGLE_CLIENT_SECRET=your_google_client_secret \
+  multi-mailbox:local
+```
+
+### Build-time vs runtime env vars
+- Runtime (Client): `VITE_APP_ID`, `VITE_PUBLIC_BASE_URL`, `VITE_OAUTH_PORTAL_URL`, `VITE_FRONTEND_FORGE_API_URL`, `VITE_FRONTEND_FORGE_API_KEY`
+  - The server exposes these via `GET /runtime-config.json` at startup.
+- Runtime (Server): `DATABASE_URL`, `JWT_SECRET`, `OWNER_OPEN_ID`, `ADMIN_SEED_*`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `PORT`, `NODE_ENV`, and other storage/provider envs.
+
+### Runtime config endpoint
+The frontend reads configuration from `GET /runtime-config.json` so you can change values at container startup:
+```bash
+docker run -p 3000:3000 \
+  -e VITE_APP_ID=your_app_id \
+  -e VITE_PUBLIC_BASE_URL=http://localhost:3000 \
+  -e VITE_OAUTH_PORTAL_URL=http://localhost:3000 \
+  -e VITE_FRONTEND_FORGE_API_URL=https://forge.butterfly-effect.dev \
+  -e VITE_FRONTEND_FORGE_API_KEY=your_key \
+  multi-mailbox:local
+```
+
+### GitHub Actions (GHCR)
+This repo builds and pushes images to `ghcr.io/<owner>/multi-mailbox` on tag releases (`v*`) and on manual workflow dispatch.
+Since Vite variables are runtime-configurable, you can set `VITE_*` as container environment variables in your deployment.
+
 ## Project Structure
 
 - `client/`: Frontend React application

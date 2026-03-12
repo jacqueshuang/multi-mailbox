@@ -50,6 +50,17 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
+  app.get("/runtime-config.json", (_req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    res.json({
+      VITE_APP_ID: process.env.VITE_APP_ID,
+      VITE_PUBLIC_BASE_URL: process.env.VITE_PUBLIC_BASE_URL,
+      VITE_OAUTH_PORTAL_URL: process.env.VITE_OAUTH_PORTAL_URL,
+      VITE_FRONTEND_FORGE_API_URL: process.env.VITE_FRONTEND_FORGE_API_URL,
+      VITE_FRONTEND_FORGE_API_KEY: process.env.VITE_FRONTEND_FORGE_API_KEY,
+    });
+  });
+
   // Mock OAuth Routes (for self-contained environment)
   app.use(mockAuthRouter);
 

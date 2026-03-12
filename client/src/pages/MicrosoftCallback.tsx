@@ -49,7 +49,8 @@ export default function MicrosoftCallback() {
       return;
     }
 
-    const baseUrl = import.meta.env.VITE_PUBLIC_BASE_URL || window.location.origin;
+    const runtimeConfig = (window as any).__RUNTIME_CONFIG__ || {};
+    const baseUrl = runtimeConfig.VITE_PUBLIC_BASE_URL || import.meta.env.VITE_PUBLIC_BASE_URL || window.location.origin;
     const redirectUri = `${baseUrl}/microsoft-callback`;
 
     handleCallbackMutation.mutate({

@@ -86,8 +86,10 @@ declare global {
   }
 }
 
-const API_KEY = import.meta.env.VITE_FRONTEND_FORGE_API_KEY;
+const runtimeConfig = (window as any).__RUNTIME_CONFIG__ || {};
+const API_KEY = runtimeConfig.VITE_FRONTEND_FORGE_API_KEY ?? import.meta.env.VITE_FRONTEND_FORGE_API_KEY;
 const FORGE_BASE_URL =
+  runtimeConfig.VITE_FRONTEND_FORGE_API_URL ??
   import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
