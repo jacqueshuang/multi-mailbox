@@ -15,7 +15,8 @@
       "Bash(pnpm run dev)",
       "Bash(pnpm add -D baseline-browser-mapping@latest)",
       "Bash(timeout 12s pnpm start)",
-      "Bash(pnpm db:migrate && pnpm db:migrate)"
+      "Bash(pnpm db:migrate && pnpm db:migrate)",
+      "Bash(git status:*)"
     ]
   }
 }
