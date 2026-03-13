@@ -2,6 +2,9 @@ FROM docker.1ms.run/node:20-bullseye-slim AS builder
 
 WORKDIR /app
 
+# Enable corepack and install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
 RUN pnpm install --no-frozen-lockfile
