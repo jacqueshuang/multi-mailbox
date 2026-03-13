@@ -1,8 +1,6 @@
-FROM node:20-bullseye-slim AS builder
+FROM docker.1ms.run/node:20-bullseye-slim AS builder
 
 WORKDIR /app
-
-RUN corepack enable
 
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
@@ -21,7 +19,7 @@ RUN pnpm build
 
 RUN pnpm prune --prod
 
-FROM node:20-bullseye-slim AS runner
+FROM docker.1ms.run/node:20-bullseye-slim AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
