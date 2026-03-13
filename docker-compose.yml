@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  multi-mailbox:
+    image: ghcr.io/jacqueshuang/multi-mailbox:v1.0.0
+    container_name: multi-mailbox
+    ports:
+      - "3000:3000"
+    environment:
+      # Server
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      OWNER_OPEN_ID: ${OWNER_OPEN_ID}
+
+      # Admin seed (optional)
+      ADMIN_SEED_ENABLED: ${ADMIN_SEED_ENABLED}
+      ADMIN_SEED_USERNAME: ${ADMIN_SEED_USERNAME}
+      ADMIN_SEED_PASSWORD: ${ADMIN_SEED_PASSWORD}
+      ADMIN_SEED_DISPLAY_NAME: ${ADMIN_SEED_DISPLAY_NAME}
+
+      # OAuth / runtime config
+      VITE_APP_ID: ${VITE_APP_ID}
+      OAUTH_SERVER_URL: ${OAUTH_SERVER_URL}
+      VITE_OAUTH_PORTAL_URL: ${VITE_OAUTH_PORTAL_URL}
+
+      # Google OAuth (optional)
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_PROXY_URL: ${GOOGLE_PROXY_URL}
+
+      # Microsoft OAuth (optional)
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
+    restart: unless-stopped
