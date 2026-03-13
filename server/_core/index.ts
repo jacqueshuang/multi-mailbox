@@ -193,7 +193,9 @@ async function startServer() {
   
   // Development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
-    const { setupVite } = await import("./vite");
+    // Use Function constructor to avoid esbuild from analyzing this import
+    // This ensures vite is only loaded in development mode
+    const setupVite = await new Function('return import("./vite").then(m => m.setupVite)')();
     await setupVite(app, server);
   } else {
     serveStatic(app);
