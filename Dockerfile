@@ -2,7 +2,6 @@ FROM docker.1ms.run/node:20-bullseye-slim AS builder
 
 WORKDIR /app
 
-# Enable corepack and install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY package.json pnpm-lock.yaml ./
@@ -20,17 +19,27 @@ ENV VITE_OAUTH_PORTAL_URL=$VITE_OAUTH_PORTAL_URL
 
 RUN pnpm build
 
-RUN pnpm prune --prod
-
 FROM docker.1ms.run/node:20-bullseye-slim AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
+RUN apt-get update && apt-get install -y --no-install-recommends default-mysql-client && rm -rf /var/lib/apt/lists/*
+
+# Copy package files and install production dependencies with npm
+COPY package.json ./
+RUN npm install --legacy-peer-deps --omit=dev
+
+# Install drizzle-kit in a separate directory
+RUN mkdir -p /opt/drizzle && cd /opt/drizzle && npm init -y && npm install drizzle-kit
+ENV NODE_PATH=/opt/drizzle/node_modules
+
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 3000
 
-CMD ["node", "dist/index.js"]
+ENTRYPOINT ["docker-entrypoint.sh"]

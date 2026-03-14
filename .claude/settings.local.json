@@ -17,7 +17,8 @@
       "Bash(timeout 12s pnpm start)",
       "Bash(pnpm db:migrate && pnpm db:migrate)",
       "Bash(git status:*)",
-      "Bash(docker build:*)"
+      "Bash(docker build:*)",
+      "Bash(pnpm install:*)"
     ]
   }
 }
