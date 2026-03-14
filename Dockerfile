@@ -1,4 +1,4 @@
-FROM docker.1ms.run/node:20-bullseye-slim AS builder
+FROM node:20-bullseye-slim AS builder
 
 WORKDIR /app
 
@@ -19,20 +19,16 @@ ENV VITE_OAUTH_PORTAL_URL=$VITE_OAUTH_PORTAL_URL
 
 RUN pnpm build
 
-FROM docker.1ms.run/node:20-bullseye-slim AS runner
+FROM node:20-bullseye-slim AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
 
 RUN apt-get update && apt-get install -y --no-install-recommends default-mysql-client && rm -rf /var/lib/apt/lists/*
 
-# Copy package files and install production dependencies with npm
-COPY package.json ./
-RUN npm install --legacy-peer-deps --omit=dev
-
-# Install drizzle-kit in a separate directory
-RUN mkdir -p /opt/drizzle && cd /opt/drizzle && npm init -y && npm install drizzle-kit
-ENV NODE_PATH=/opt/drizzle/node_modules
+# Copy all dependencies (including devDependencies for drizzle-kit)
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/drizzle ./drizzle
